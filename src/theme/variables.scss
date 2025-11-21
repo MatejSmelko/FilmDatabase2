@@ -1,18 +1,10 @@
 /* LIGHT MODE */
 :root,
-:root[color-theme="light"] {
-  --ion-background-color: #f5f5f5;
-  --ion-text-color: #111;
-  --ion-card-background: #ffffff;
-
-  --ion-color-primary: #e92063;
-}
-
-/* DARK MODE */
-:root[color-theme="dark"] {
-  --ion-background-color: #16181D;
-  --ion-text-color: #ffffff;
-  --ion-card-background: #1e2127;
-
-  --ion-color-primary: #e92063;
+:root{/** Secondary Color - Pink/Red from image */
+  --ion-color-secondary: #e91e63;
+  --ion-color-secondary-rgb: 233, 30, 99;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #cd1a57;
+  --ion-color-secondary-tint: #eb3573;
 }

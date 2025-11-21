@@ -1,65 +1,112 @@
-ion-toolbar {
-  --background: #121212;
-  --color: white;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
+// Barvy
+$primary-bg: #121212;
+$card-bg: #1e1e1e;
+$accent: #e91e63; // Růžová
 
 ion-content {
-  --background: #1c1c1c;
+  --background: #{$primary-bg};
 }
 
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: left;
-  padding: 30px;
+.app-logo {
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-h1 {
-  font-size: 1.6rem;
-  margin-bottom: 30px;
+// Tlačítko New Movie v hlavičce
+ion-toolbar ion-button {
+  --background: #{$accent};
+  --border-radius: 4px;
+  --box-shadow: none;
+  font-weight: 600;
+  margin-right: 10px;
 }
 
-.empty-box {
-  margin-top: 40px;
-  text-align: center;
-}
-
-.empty-box img {
-  width: 350px;
-  border-radius: 10px;
+.segment-container {
+  padding: 10px 16px;
+  background: #1a1a1a;
   margin-bottom: 20px;
 }
 
-.empty-box h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-}
-
-.empty-box p {
-  font-size: 0.95rem;
-  color: #808080;
-  margin-bottom: 25px;
-}
-
-ion-button {
-  --background: #e91e63;
-  --background-hover: #d81b60;
-  --background-activated: #c2185b;
-  --border-radius: 20px;
+.page-title {
   padding: 0 16px;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: #fff;
+  
+  .illustration {
+    font-size: 100px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  h2 { margin-bottom: 5px; }
+  p { color: #888; margin-bottom: 20px; }
+  
+  ion-button {
+    --background: #{$accent};
+  }
+}
+
+// Movie Card
+.movie-card {
+  background: $card-bg;
+  margin: 5px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+
+  .card-image {
+    height: 250px; // Výška plakátu
+    background-size: cover;
+    background-position: center;
+    background-color: #333;
+  }
+
+  .card-content {
+    padding: 12px;
+    color: #fff;
+
+    h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #888;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+
+    .tags {
+      margin: 8px 0;
+      ion-badge {
+        --background: #333;
+        --color: #ccc;
+        font-weight: normal;
+      }
+    }
+
+    .rating {
+      display: flex;
+      gap: 2px;
+    }
+  }
 }

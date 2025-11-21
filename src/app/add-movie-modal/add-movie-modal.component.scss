@@ -1,0 +1,44 @@
+ion-content {
+  --background: #1a1b25; // Tmavě šedá na pozadí modalu
+}
+
+label {
+  display: block;
+  color: #fff;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.custom-input {
+  background: #252630;
+  border: 1px solid #3a3b45;
+  border-radius: 8px;
+  padding: 0 10px;
+  
+  ion-input, ion-textarea {
+    --color: #fff;
+    --placeholder-color: #777;
+  }
+}
+
+ion-range {
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 10px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+
+  ion-button[type="submit"] {
+    --border-radius: 8px;
+    --background: #e91e63; // Ta růžová barva z obrázku
+    width: 150px;
+  }
+}
