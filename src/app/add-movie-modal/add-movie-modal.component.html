@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="dark">
-    <ion-title>Add a New Movie</ion-title>
+    <ion-title>{{ isEditing ? 'Edit Movie' : 'Add a New Movie' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
         <ion-icon name="close"></ion-icon>
@@ -50,7 +50,9 @@
 
     <div class="actions">
       <ion-button fill="clear" color="light" (click)="dismiss()">Cancel</ion-button>
-      <ion-button type="submit" color="secondary" expand="block">Create Movie</ion-button>
+      <ion-button type="submit" color="secondary" expand="block">
+        {{ isEditing ? 'Save Changes' : 'Create Movie' }}
+      </ion-button>
     </div>
 
   </form>

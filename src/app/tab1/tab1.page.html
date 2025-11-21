@@ -15,7 +15,7 @@
 <ion-content [fullscreen]="true" color="dark">
   
   <div class="segment-container">
-    <ion-segment value="collection" mode="ios" color="secondary">
+    <ion-segment [(ngModel)]="currentView" mode="ios" color="secondary">
       <ion-segment-button value="collection">
         <ion-label>Collection</ion-label>
       </ion-segment-button>
@@ -25,43 +25,72 @@
     </ion-segment>
   </div>
 
-  <h1 class="page-title">Your Movie Collection</h1>
+  <div *ngIf="currentView === 'collection'">
+    <h1 class="page-title">Your Movie Collection</h1>
 
-  <div class="empty-state" *ngIf="movies.length === 0">
-    <div class="illustration">
-      <ion-icon name="videocam-outline"></ion-icon>
+    <div class="empty-state" *ngIf="movies.length === 0">
+      <div class="illustration">
+        <ion-icon name="videocam-outline"></ion-icon>
+      </div>
+      <h2>Your collection is empty!</h2>
+      <p>Add your first movie to get started.</p>
+      <ion-button color="secondary" (click)="openAddModal()">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Add a Movie
+      </ion-button>
     </div>
-    <h2>Your collection is empty!</h2>
-    <p>Add your first movie to get started.</p>
-    <ion-button color="secondary" (click)="openAddModal()">
-      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
-      Add a Movie
-    </ion-button>
+
+    <ion-grid *ngIf="movies.length > 0">
+      <ion-row>
+        <ion-col size="6" size-md="4" size-lg="3" *ngFor="let m of movies">
+          <ion-card class="movie-card">
+            <div class="card-image" [style.background-image]="'url(' + m.imageUrl + ')'"></div>
+            <div class="card-content">
+              <h3>{{ m.title }}</h3>
+              <div class="meta">
+                <span>{{ m.year }}</span>
+                <ion-icon name="ellipsis-vertical" class="more-opt" (click)="openOptions(m)"></ion-icon>
+              </div>
+              <div class="tags">
+                <ion-badge color="medium">{{ m.genre }}</ion-badge>
+              </div>
+              <div class="rating">
+                 <ion-icon *ngFor="let star of [1,2,3,4,5]" 
+                           [name]="star <= m.rating ? 'star' : 'star-outline'" 
+                           color="warning"></ion-icon>
+              </div>
+            </div>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 
-  <ion-grid *ngIf="movies.length > 0">
+  <div *ngIf="currentView === 'stats'" class="ion-padding">
+    <h1 class="page-title">Statistics</h1>
+    
     <ion-row>
-      <ion-col size="6" size-md="4" size-lg="3" *ngFor="let m of movies">
-        <ion-card class="movie-card">
-          <div class="card-image" [style.background-image]="'url(' + m.imageUrl + ')'"></div>
-          <div class="card-content">
-            <h3>{{ m.title }}</h3>
-            <div class="meta">
-              <span>{{ m.year }}</span>
-              <ion-icon name="ellipsis-vertical" class="more-opt" (click)="openOptions(m)"></ion-icon>
+      <ion-col size="6">
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <h1>{{ movies.length }}</h1>
+            <p>Movies</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <div class="rating-flex">
+              <h1>{{ getAverageRating() }}</h1>
+              <ion-icon name="star" color="warning"></ion-icon>
             </div>
-            <div class="tags">
-              <ion-badge color="medium">{{ m.genre }}</ion-badge>
-            </div>
-            <div class="rating">
-               <ion-icon *ngFor="let star of [1,2,3,4,5]" 
-                         [name]="star <= m.rating ? 'star' : 'star-outline'" 
-                         color="warning"></ion-icon>
-            </div>
-          </div>
+            <p>Avg Rating</p>
+          </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
-  </ion-grid>
+  </div>
 
 </ion-content>
