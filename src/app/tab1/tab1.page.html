@@ -48,7 +48,7 @@
             <h3>{{ m.title }}</h3>
             <div class="meta">
               <span>{{ m.year }}</span>
-              <ion-icon name="ellipsis-vertical" class="more-opt"></ion-icon>
+              <ion-icon name="ellipsis-vertical" class="more-opt" (click)="openOptions(m)"></ion-icon>
             </div>
             <div class="tags">
               <ion-badge color="medium">{{ m.genre }}</ion-badge>
