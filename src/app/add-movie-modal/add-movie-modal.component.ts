@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core'; // Přidán Input a OnInit
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { Movie } from '../interface/movie.interface';
 
 @Component({
@@ -13,33 +13,96 @@ import { Movie } from '../interface/movie.interface';
 })
 export class AddMovieModalComponent implements OnInit {
   
-  // Pokud sem něco pošleme, uloží se to sem
   @Input() movieData: Movie | null = null;
 
-  // S tímto objektem pracuje formulář
   movie: Partial<Movie> = {
     rating: 3
   };
 
-  isEditing = false; // Pomocná proměnná pro změnu nadpisů
+  isEditing = false;
 
-  constructor(private modalCtrl: ModalController) {}
+  // Seznam všech žánrů
+  allGenres: string[] = [
+    'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 
+    'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 
+    'History', 'Horror', 'Music', 'Musical', 'Mystery', 
+    'Romance', 'Sci-Fi', 'Sport', 'Thriller', 'War', 'Western'
+  ];
+
+  // Aktuálně nalezené shody
+  filteredGenres: string[] = [];
+  
+  // Ovládá viditelnost našeptávače
+  showSuggestions = false;
+
+  constructor(
+    private modalCtrl: ModalController,
+    private toastCtrl: ToastController 
+  ) {}
 
   ngOnInit() {
-    // Pokud nám přišla data (editace), naplníme formulář
     if (this.movieData) {
-      this.movie = { ...this.movieData }; // Uděláme kopii, ať neměníme originál hned
+      this.movie = { ...this.movieData };
       this.isEditing = true;
     }
+  }
+
+  // 1. Funkce se volá při každém stisknutí klávesy
+  onGenreInput(event: any) {
+    const query = event.target.value;
+
+    // Pokud je políčko prázdné, skryjeme nabídku
+    if (!query || query.trim() === '') {
+      this.showSuggestions = false;
+      return;
+    }
+
+    // Filtrujeme seznam (ignorujeme velká/malá písmena)
+    this.filteredGenres = this.allGenres.filter(g => 
+      g.toLowerCase().startsWith(query.toLowerCase())
+    );
+
+    // Pokud jsme něco našli, zobrazíme nabídku
+    this.showSuggestions = this.filteredGenres.length > 0;
+  }
+
+  // 2. Když uživatel klikne na položku v našeptávači
+  selectGenre(genre: string) {
+    this.movie.genre = genre; // Vyplníme input
+    this.showSuggestions = false; // Skryjeme nabídku
+  }
+
+  // Klikání na hvězdičky
+  setRating(val: number) {
+    this.movie.rating = val;
   }
 
   dismiss() {
     this.modalCtrl.dismiss();
   }
 
-  saveMovie() {
-    if (this.movie.title) {
-      this.modalCtrl.dismiss(this.movie, 'confirm');
+  async saveMovie() {
+    if (!this.movie.title) {
+      this.showToast('Please enter a movie title.');
+      return;
     }
+
+    const year = this.movie.year;
+    if (!year || year < 1888 || year > 2030 || year.toString().length !== 4) {
+      this.showToast('Please enter a valid 4-digit year.');
+      return;
+    }
+
+    this.modalCtrl.dismiss(this.movie, 'confirm');
+  }
+
+  async showToast(msg: string) {
+    const toast = await this.toastCtrl.create({
+      message: msg,
+      duration: 2000,
+      color: 'danger',
+      position: 'top'
+    });
+    toast.present();
   }
 }

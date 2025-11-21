@@ -44,7 +44,13 @@
       <ion-row>
         <ion-col size="6" size-md="4" size-lg="3" *ngFor="let m of movies">
           <ion-card class="movie-card">
-            <div class="card-image" [style.background-image]="'url(' + m.imageUrl + ')'"></div>
+            <div class="image-container">
+              <img 
+                [src]="m.imageUrl" 
+                (error)="m.imageUrl = 'https://placehold.co/400x600/1e1e1e/e91e63?text=No+Image'"
+                alt="{{ m.title }}"
+              >
+            </div>
             <div class="card-content">
               <h3>{{ m.title }}</h3>
               <div class="meta">
@@ -52,12 +58,12 @@
                 <ion-icon name="ellipsis-vertical" class="more-opt" (click)="openOptions(m)"></ion-icon>
               </div>
               <div class="tags">
-                <ion-badge color="medium">{{ m.genre }}</ion-badge>
+                <ion-badge color="medium">{{ m.genre || 'Unknown' }}</ion-badge>
               </div>
               <div class="rating">
-                 <ion-icon *ngFor="let star of [1,2,3,4,5]" 
-                           [name]="star <= m.rating ? 'star' : 'star-outline'" 
-                           color="warning"></ion-icon>
+                <ion-icon *ngFor="let star of [1,2,3,4,5]" 
+                          [name]="star <= m.rating ? 'star' : 'star-outline'" 
+                          color="warning"></ion-icon>
               </div>
             </div>
           </ion-card>

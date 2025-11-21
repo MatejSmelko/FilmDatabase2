@@ -42,3 +42,59 @@ ion-range {
     width: 150px;
   }
 }
+.rating-label {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.1rem;
+  color: #e91e63; // Růžová
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  
+  ion-icon {
+    font-size: 3rem; // Velké hvězdy
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:active {
+      transform: scale(1.2); // Efekt při kliknutí
+    }
+  }
+}
+
+// ... Tvé staré styly ...
+
+// Styl pro našeptávací okno
+.suggestions-dropdown {
+  position: absolute; // Aby plaval nad obsahem
+  top: 85px; // Posuneme ho pod input (záleží na výšce labelu + inputu)
+  left: 5px;
+  right: 5px;
+  background: #252630; // Stejná barva jako inputy
+  border: 1px solid #3a3b45;
+  border-radius: 0 0 8px 8px; // Zakulatíme jen spodek
+  z-index: 100; // Musí být nad vším ostatním
+  max-height: 200px; // Pokud je toho moc, bude se scrollovat
+  overflow-y: auto;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+
+  .suggestion-item {
+    padding: 12px;
+    color: #fff;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #e91e63; // Růžová při najetí myší (nebo dotyku)
+      color: white;
+    }
+  }
+}

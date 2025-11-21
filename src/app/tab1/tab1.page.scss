@@ -59,55 +59,32 @@ ion-toolbar ion-button {
   }
 }
 
-// Movie Card
 .movie-card {
-  background: $card-bg;
+  background: #1e1e1e;
   margin: 5px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  overflow: hidden; // Důležité, aby obrázek nepřetékal rohy
 
-  .card-image {
-    height: 250px; // Výška plakátu
-    background-size: cover;
-    background-position: center;
-    background-color: #333;
+  // Nový styl pro kontejner obrázku
+  .image-container {
+    height: 250px;
+    width: 100%;
+    background-color: #333; // Barva pozadí, než se obrázek načte
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // Tohle zajistí, že se obrázek nedeformuje
+      display: block;
+    }
   }
 
   .card-content {
+    // ... (zbytek zůstává stejný)
     padding: 12px;
     color: #fff;
-
-    h3 {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #888;
-      font-size: 0.85rem;
-      margin-top: 5px;
-    }
-
-    .tags {
-      margin: 8px 0;
-      ion-badge {
-        --background: #333;
-        --color: #ccc;
-        font-weight: normal;
-      }
-    }
-
-    .rating {
-      display: flex;
-      gap: 2px;
-    }
+    // ... atd
   }
 }
 
