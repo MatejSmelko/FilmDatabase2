@@ -15,7 +15,7 @@
 <ion-content [fullscreen]="true" color="dark">
   
   <div class="segment-container">
-    <ion-segment [(ngModel)]="currentView" mode="ios" color="secondary">
+    <ion-segment [(ngModel)]="currentView" mode="ios">
       <ion-segment-button value="collection">
         <ion-label>Collection</ion-label>
       </ion-segment-button>
@@ -26,7 +26,19 @@
   </div>
 
   <div *ngIf="currentView === 'collection'">
-    <h1 class="page-title">Your Movie Collection</h1>
+    
+    <div class="header-row ion-padding-horizontal">
+      <h1 class="page-title" style="margin-bottom: 0;">Your Collection</h1>
+    </div>
+
+    <div class="search-container ion-padding-horizontal" style="margin-bottom: 10px;">
+      <ion-searchbar 
+        placeholder="Search movies..." 
+        color="dark" 
+        animated="true"
+        (ionInput)="searchMovies($event)">
+      </ion-searchbar>
+    </div>
 
     <div class="empty-state" *ngIf="movies.length === 0">
       <div class="illustration">
@@ -42,7 +54,11 @@
 
     <ion-grid *ngIf="movies.length > 0">
       <ion-row>
-        <ion-col size="6" size-md="4" size-lg="3" *ngFor="let m of movies">
+        <ion-col size="12" *ngIf="filteredMovies.length === 0" class="ion-text-center">
+          <p style="color: #888; margin-top: 20px;">No movies found matching your search.</p>
+        </ion-col>
+
+        <ion-col size="6" size-md="4" size-lg="3" *ngFor="let m of filteredMovies">
           <ion-card class="movie-card">
             <div class="image-container">
               <img 
@@ -61,9 +77,9 @@
                 <ion-badge color="medium">{{ m.genre || 'Unknown' }}</ion-badge>
               </div>
               <div class="rating">
-                <ion-icon *ngFor="let star of [1,2,3,4,5]" 
-                          [name]="star <= m.rating ? 'star' : 'star-outline'" 
-                          color="warning"></ion-icon>
+                 <ion-icon *ngFor="let star of [1,2,3,4,5]" 
+                           [name]="star <= m.rating ? 'star' : 'star-outline'" 
+                           color="warning"></ion-icon>
               </div>
             </div>
           </ion-card>
@@ -74,7 +90,6 @@
 
   <div *ngIf="currentView === 'stats'" class="ion-padding">
     <h1 class="page-title">Statistics</h1>
-    
     <ion-row>
       <ion-col size="6">
         <ion-card class="stat-card">
@@ -84,7 +99,6 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-
       <ion-col size="6">
         <ion-card class="stat-card">
           <ion-card-content>
