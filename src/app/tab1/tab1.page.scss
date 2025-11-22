@@ -90,7 +90,7 @@ ion-toolbar ion-button {
 
 // Styl pro statistické karty
 .stat-card {
-  background: #252630; // Stejná barva jako inputy
+  background: #252630; 
   text-align: center;
   color: #fff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -123,7 +123,7 @@ ion-toolbar ion-button {
 }
 
   ion-segment-button {
-    --color-checked: #e91063;
+    --color-checked: #6996d1;
     --indicator-color: #ffffff;
     --color: #666666;
   }
@@ -132,3 +132,26 @@ ion-toolbar ion-button {
     border-radius: 8px;
     padding: 2px;
   }
+
+  // Kontejner pro Searchbar a Sort tlačítko
+.search-sort-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; // Mezera mezi nimi
+  margin-bottom: 10px;
+
+  .custom-search {
+    padding-inline-start: 0;
+    padding-inline-end: 0;
+    width: 100%; // Vyhledávání zabere zbytek místa
+  }
+
+  .sort-btn {
+    --border-radius: 8px;
+    height: 42px; // Stejná výška jako searchbar
+    width: 42px;
+    margin: 0;
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}

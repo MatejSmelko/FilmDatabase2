@@ -44,11 +44,63 @@ export class Tab1Page implements OnInit {
       );
     }
   }
+// --- NOVÉ: Otevření menu pro řazení ---
+  async openSortMenu() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Sort Collection By',
+      buttons: [
+        {
+          text: 'Rating (Highest First)',
+          icon: 'star',
+          handler: () => {
+            this.sortMovies('rating');
+          }
+        },
+        {
+          text: 'Year (Newest First)',
+          icon: 'calendar',
+          handler: () => {
+            this.sortMovies('year');
+          }
+        },
+        {
+          text: 'Title (A-Z)',
+          icon: 'text',
+          handler: () => {
+            this.sortMovies('title');
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
 
+  // --- NOVÉ: Samotná logika řazení ---
+  sortMovies(criteria: string) {
+    this.filteredMovies.sort((a, b) => {
+      if (criteria === 'rating') {
+        return b.rating - a.rating;
+      } 
+      else if (criteria === 'year') {
+        return (b.year || 0) - (a.year || 0);
+      } 
+      else if (criteria === 'title') {
+        return a.title.localeCompare(b.title);
+      }
+      return 0;
+    });
+
+    // Tip: Pokud chceš, aby se seřadilo i hlavní pole (pro příště), odkomentuj toto:
+    // this.movies = [...this.filteredMovies];
+    // this.saveMovies();
+  }
   saveMovies() {
     localStorage.setItem('my_movies', JSON.stringify(this.movies));
-    // Po uložení musíme aktualizovat i zobrazený seznam (pokud zrovna nehledáme)
-    // Pro jednoduchost resetujeme filtr, aby se zobrazil nový film
     this.filteredMovies = [...this.movies];
   }
 

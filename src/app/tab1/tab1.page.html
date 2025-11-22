@@ -31,13 +31,20 @@
       <h1 class="page-title" style="margin-bottom: 0;">Your Collection</h1>
     </div>
 
-    <div class="search-container ion-padding-horizontal" style="margin-bottom: 10px;">
+    <div class="search-sort-container ion-padding-horizontal">
+      
       <ion-searchbar 
+        class="custom-search"
         placeholder="Search movies..." 
         color="dark" 
         animated="true"
         (ionInput)="searchMovies($event)">
       </ion-searchbar>
+
+      <ion-button color="secondary" fill="solid" class="sort-btn" (click)="openSortMenu()">
+        <ion-icon slot="icon-only" name="filter"></ion-icon>
+      </ion-button>
+      
     </div>
 
     <div class="empty-state" *ngIf="movies.length === 0">
