@@ -1,17 +1,56 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-title>My Account</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content color="dark" class="ion-padding">
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <div *ngIf="!userEmail" class="auth-container">
+    
+    <div class="logo">
+      <ion-icon name="person-circle-outline"></ion-icon>
+      <h2>{{ isLogin ? 'Welcome Back' : 'Create Account' }}</h2>
+    </div>
+
+    <div class="segment-box">
+      <ion-segment [(ngModel)]="authMode" mode="ios" (ionChange)="toggleMode()">
+        <ion-segment-button value="login">
+          <ion-label>Login</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="register">
+          <ion-label>Register</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      <div class="custom-input">
+        <ion-input type="email" placeholder="Email" [(ngModel)]="email" name="email" required></ion-input>
+      </div>
+      
+      <div class="custom-input">
+        <ion-input type="password" placeholder="Password" [(ngModel)]="password" name="password" required></ion-input>
+      </div>
+
+      <ion-button expand="block" color="secondary" type="submit" class="submit-btn">
+        {{ isLogin ? 'Sign In' : 'Sign Up' }}
+      </ion-button>
+    </form>
+
+  </div>
+
+  <div *ngIf="userEmail" class="profile-container">
+    <div class="avatar">
+      {{ userEmail.charAt(0).toUpperCase() }}
+    </div>
+    <h2>You are logged in!</h2>
+    <p>{{ userEmail }}</p>
+
+    <ion-button expand="block" color="medium" fill="outline" (click)="logout()">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Log Out
+    </ion-button>
+  </div>
+
 </ion-content>

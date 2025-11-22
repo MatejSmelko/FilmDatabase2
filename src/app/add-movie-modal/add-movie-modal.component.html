@@ -52,9 +52,27 @@
       </ion-col>
     </ion-row>
 
-    <label>Image URL</label>
-    <div class="custom-input">
-      <ion-input [(ngModel)]="movie.imageUrl" name="imageUrl" placeholder="https://example.com/poster.jpg"></ion-input>
+<label>Movie Poster</label>
+    
+    <div class="image-preview" *ngIf="movie.imageUrl" [style.background-image]="'url(' + movie.imageUrl + ')'">
+      <div class="remove-btn" (click)="movie.imageUrl = ''">
+        <ion-icon name="trash"></ion-icon>
+      </div>
+    </div>
+
+    <div class="upload-container" *ngIf="!movie.imageUrl">
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" #fileInput hidden>
+      
+      <ion-button expand="block" color="medium" fill="outline" class="dashed-btn" (click)="fileInput.click()">
+        <ion-icon name="image-outline" slot="start"></ion-icon>
+        Upload form Gallery
+      </ion-button>
+
+      <div class="divider">OR PASTE URL</div>
+
+      <div class="custom-input">
+        <ion-input [(ngModel)]="movie.imageUrl" name="imageUrl" placeholder="https://..."></ion-input>
+      </div>
     </div>
 
     <label class="rating-label">Rating: {{ movie.rating }}/5</label>

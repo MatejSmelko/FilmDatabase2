@@ -1,14 +1,13 @@
-/* Barva pozadí celé lišty (Růžová) */
 ion-tab-bar {
-  --background: #6996d1; 
-  --border: none; /* Odstraní tenkou linku nahoře */
+  --background: #6996d1;
+  --border: none;
+  
+  display: flex;
+  flex-direction: row; 
+  justify-content: center;
 }
 
-/* Styly pro tlačítka */
 ion-tab-button {
-  /* Barva NEAKTIVNÍ ikony (trochu průhledná černá) */
-  --color: rgba(0, 0, 0, 0.4); 
-
-  /* Barva AKTIVNÍ ikony - to "kolečko" (Čistá černá) */
-  --color-selected: #121212;
+  --color: rgba(0, 0, 0, 0.4);
+  --color-selected: #000000;
 }

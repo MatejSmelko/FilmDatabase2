@@ -47,6 +47,27 @@ export class AddMovieModalComponent implements OnInit {
     }
   }
 
+  // --- NOVÉ: Funkce pro nahrání obrázku ---
+  onFileSelected(event: any) {
+    const file = event.target.files[0]; // Vezmeme první vybraný soubor
+    
+    if (file) {
+      // Kontrola velikosti (volitelné): Varování, pokud je > 2MB
+      if (file.size > 2 * 1024 * 1024) {
+        this.showToast('Image is too large! Try a smaller one.');
+        return;
+      }
+
+      const reader = new FileReader();
+      // Až se soubor načte, uložíme ho jako text (Base64)
+      reader.onload = () => {
+        this.movie.imageUrl = reader.result as string;
+      };
+      // Spustíme čtení
+      reader.readAsDataURL(file);
+    }
+  }
+  
   // 1. Funkce se volá při každém stisknutí klávesy
   onGenreInput(event: any) {
     const query = event.target.value;
