@@ -5,9 +5,7 @@
 </ion-header>
 
 <ion-content color="dark" class="ion-padding">
-
   <div *ngIf="!userEmail" class="auth-container">
-    
     <div class="logo">
       <ion-icon name="person-circle-outline"></ion-icon>
       <h2>{{ isLogin ? 'Welcome Back' : 'Create Account' }}</h2>
@@ -28,29 +26,22 @@
       <div class="custom-input">
         <ion-input type="email" placeholder="Email" [(ngModel)]="email" name="email" required></ion-input>
       </div>
-      
       <div class="custom-input">
         <ion-input type="password" placeholder="Password" [(ngModel)]="password" name="password" required></ion-input>
       </div>
-
       <ion-button expand="block" color="secondary" type="submit" class="submit-btn">
         {{ isLogin ? 'Sign In' : 'Sign Up' }}
       </ion-button>
     </form>
-
   </div>
 
   <div *ngIf="userEmail" class="profile-container">
-    <div class="avatar">
-      {{ userEmail.charAt(0).toUpperCase() }}
-    </div>
+    <div class="avatar">{{ userEmail.charAt(0).toUpperCase() }}</div>
     <h2>You are logged in!</h2>
     <p>{{ userEmail }}</p>
-
     <ion-button expand="block" color="medium" fill="outline" (click)="logout()">
       <ion-icon name="log-out-outline" slot="start"></ion-icon>
       Log Out
     </ion-button>
   </div>
-
 </ion-content>

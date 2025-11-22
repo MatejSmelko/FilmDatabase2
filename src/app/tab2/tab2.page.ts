@@ -8,20 +8,18 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['tab2.page.scss'],
   standalone: false
 })
-export class Tab2Page{
+export class Tab2Page implements OnInit {
 
-  authMode: string = 'login'; // Přepínač v HTML
-  isLogin: boolean = true;    // Pomocná pro texty
-
+  authMode: string = 'login';
+  isLogin: boolean = true;
   email = '';
   password = '';
-  userEmail: string | null = null; // Tady bude email přihlášeného uživatele
+  userEmail: string | null = null;
 
   constructor(
-    private auth: Auth, // Injectujeme Firebase Auth
+    private auth: Auth,
     private toastCtrl: ToastController
   ) {
-    // Sledujeme, jestli je uživatel přihlášen
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
         this.userEmail = user.email;
@@ -30,45 +28,78 @@ export class Tab2Page{
       }
     });
   }
-  
+
+  ngOnInit() {
+  }
+
   toggleMode() {
     this.isLogin = this.authMode === 'login';
   }
 
   async submit() {
+    // Základní kontrola, jestli je něco vyplněno
     if (!this.email || !this.password) {
-      this.showToast('Please enter email and password', 'warning');
+      this.showToast('Zadejte prosím email a heslo.', 'warning');
       return;
     }
 
+    // Pokud je to registrace, kontrolujeme i Username (pokud ho používáš)
+    // if (!this.isLogin && !this.username) { ... } // (Odkomentuj, pokud jsi nechal username)
+
     try {
       if (this.isLogin) {
-        // PŘIHLÁŠENÍ
+        // --- PŘIHLÁŠENÍ ---
         await signInWithEmailAndPassword(this.auth, this.email, this.password);
-        this.showToast('Welcome back!', 'success');
+        this.showToast('Vítejte zpět!', 'success');
       } else {
-        // REGISTRACE
-        await createUserWithEmailAndPassword(this.auth, this.email, this.password);
-        this.showToast('Account created successfully!', 'success');
+        // --- REGISTRACE ---
+        const userCredential = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
+        
+        // (Zde případně kód pro updateProfile, pokud ho používáš)
+        
+        this.showToast('Účet byl úspěšně vytvořen!', 'success');
       }
     } catch (e: any) {
-      // Chyba (např. špatné heslo, email už existuje)
-      console.error(e);
-      this.showToast(e.message, 'danger');
+      console.error('Chyba přihlášení:', e); // Vypíše chybu do konzole pro tebe
+
+      let message = 'Nastala neznámá chyba.'; // Výchozí hláška
+
+      // PŘEKLAD CHYBOVÝCH KÓDŮ Z FIREBASE
+      switch (e.code) {
+        case 'auth/invalid-credential':
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          message = 'Nesprávný email nebo heslo.';
+          break;
+        case 'auth/email-already-in-use':
+          message = 'Tento email už je zaregistrovaný.';
+          break;
+        case 'auth/invalid-email':
+          message = 'Zadaný email nemá správný formát.';
+          break;
+        case 'auth/weak-password':
+          message = 'Heslo je příliš slabé (musí mít min. 6 znaků).';
+          break;
+        case 'auth/network-request-failed':
+          message = 'Zkontrolujte připojení k internetu.';
+          break;
+        case 'auth/too-many-requests':
+          message = 'Příliš mnoho pokusů. Zkuste to chvíli později.';
+          break;
+      }
+
+      // Zobrazíme českou hlášku červeně
+      this.showToast(message, 'danger');
     }
   }
 
   async logout() {
     await signOut(this.auth);
-    this.showToast('Logged out', 'medium');
   }
 
   async showToast(msg: string, color: string) {
     const toast = await this.toastCtrl.create({
-      message: msg,
-      duration: 2000,
-      color: color,
-      position: 'top'
+      message: msg, duration: 2000, color: color, position: 'top'
     });
     toast.present();
   }

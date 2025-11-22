@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Tab1Page } from './tab1.page';
-import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { Tab1PageRoutingModule } from './tab1-routing.module';
 import { AddMovieModalComponent } from '../add-movie-modal/add-movie-modal.component';
 
@@ -12,7 +11,6 @@ import { AddMovieModalComponent } from '../add-movie-modal/add-movie-modal.compo
     IonicModule,
     CommonModule,
     FormsModule,
-    ExploreContainerComponentModule,
     Tab1PageRoutingModule,
     AddMovieModalComponent // <--- MODÁL ZDE
   ],
