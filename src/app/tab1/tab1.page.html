@@ -2,7 +2,7 @@
   <ion-toolbar color="dark">
     
     <ion-buttons slot="start">
-      <div class="user-badge" *ngIf="userEmail">
+      <div class="user-badge" *ngIf="userEmail" (click)="openProfileMenu()">
         <ion-icon name="person-circle" color="secondary"></ion-icon>
         <span class="username">{{ userEmail.split('@')[0] }}</span>
       </div>

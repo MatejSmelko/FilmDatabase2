@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, ActionSheetController } from '@ionic/angular';
-import { Router } from '@angular/router';
 import { AddMovieModalComponent } from '../add-movie-modal/add-movie-modal.component';
 import { Movie } from '../interface/movie.interface';
-
-// --- FIREBASE IMPORTY ---
-import { Firestore, collection, collectionData, addDoc, doc, deleteDoc, updateDoc, query, orderBy } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, addDoc, doc, deleteDoc, updateDoc, query } from '@angular/fire/firestore';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -21,27 +19,27 @@ export class Tab1Page implements OnInit {
   filteredMovies: Movie[] = [];
   currentView: string = 'collection';
   
-  userId: string | null = null;       // ID přihlášeného uživatele
-  movieSubscription: Subscription | null = null; // Hlídač databáze
+  userId: string | null = null;
   userEmail: string | null = null;
+  movieSubscription: Subscription | null = null;
 
   constructor(
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
-    private firestore: Firestore, // Databáze
-    private auth: Auth,           // Přihlašování
+    private firestore: Firestore,
+    private auth: Auth,
     private router: Router
   ) {}
 
-ngOnInit() {
+  ngOnInit() {
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
         this.userId = user.uid;
-        this.userEmail = user.email; // 👈 ULOŽÍME EMAIL
+        this.userEmail = user.displayName || user.email?.split('@')[0] || 'User';
         this.loadMoviesFromFirebase();
       } else {
         this.userId = null;
-        this.userEmail = null; // 👈 VYMAŽEME EMAIL
+        this.userEmail = null;
         this.movies = [];
         this.filteredMovies = [];
         if (this.movieSubscription) {
@@ -51,33 +49,27 @@ ngOnInit() {
     });
   }
 
-  // --- NAČÍTÁNÍ DAT Z FIREBASE ---
   loadMoviesFromFirebase() {
     if (!this.userId) return;
-
-    // Cesta: users -> (moje ID) -> movies
     const moviesRef = collection(this.firestore, `users/${this.userId}/movies`);
-    
-    // Chceme data, včetně jejich ID
-    // (Můžeme přidat orderBy('title') pro základní řazení)
     const q = query(moviesRef); 
-
-    // Tohle je "živý proud" dat. Kdykoliv se v databázi něco změní, tohle se spustí.
     this.movieSubscription = collectionData(q, { idField: 'id' }).subscribe((data) => {
       this.movies = data as Movie[];
-      this.filteredMovies = [...this.movies]; // Aktualizujeme i zobrazený seznam
+      this.filteredMovies = [...this.movies];
     });
   }
-  async openGuestMenu() {
+
+  // Tady byl asi problém (chybějící závorka před touto funkcí)
+  async openProfileMenu() {
     const actionSheet = await this.actionSheetCtrl.create({
-      header: 'You are currently a Guest',
-      subHeader: 'Sign in to sync your movies across devices.',
+      header: `Logged in as ${this.userEmail}`,
       buttons: [
         {
-          text: 'Log In / Register',
-          icon: 'log-in-outline',
-          handler: () => {
-            // 🚀 TOTO PŘEPNE NA TAB 2
+          text: 'Log Out',
+          role: 'destructive',
+          icon: 'log-out-outline',
+          handler: async () => {
+            await this.auth.signOut();
             this.router.navigate(['/tabs/tab2']);
           }
         },
@@ -90,7 +82,29 @@ ngOnInit() {
     });
     await actionSheet.present();
   }
-  // --- PŘIDÁNÍ / EDITACE ---
+
+  async openGuestMenu() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'You are currently a Guest',
+      subHeader: 'Sign in to save your movies.',
+      buttons: [
+        {
+          text: 'Log In',
+          icon: 'log-in-outline',
+          handler: () => {
+            this.router.navigate(['/tabs/tab2']);
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
   async openAddModal(movieToEdit?: Movie) {
     const modal = await this.modalCtrl.create({
       component: AddMovieModalComponent,
@@ -101,49 +115,17 @@ ngOnInit() {
     modal.onWillDismiss().then(async (data) => {
       if (data.role === 'confirm' && this.userId) {
         const resultData = data.data;
-
         if (resultData.id && this.movies.some(m => m.id === resultData.id)) {
-          // ✏️ EDITACE (Update)
-          // Odkaz na konkrétní dokument v databázi
           const movieDocRef = doc(this.firestore, `users/${this.userId}/movies/${resultData.id}`);
           await updateDoc(movieDocRef, resultData);
         } else {
-          // ➕ NOVÝ FILM (Create)
-          // Smažeme ID (pokud nějaké přišlo), Firestore si vygeneruje vlastní
           const { id, ...movieWithoutId } = resultData; 
           const moviesRef = collection(this.firestore, `users/${this.userId}/movies`);
           await addDoc(moviesRef, movieWithoutId);
         }
       }
     });
-
     return await modal.present();
-  }
-
-  // --- MAZÁNÍ ---
-  async deleteMovie(movie: Movie) {
-    if (!this.userId || !movie.id) return;
-
-    const movieDocRef = doc(this.firestore, `users/${this.userId}/movies/${movie.id}`);
-    await deleteDoc(movieDocRef);
-  }
-
-  // --- HLEDÁNÍ (Zůstává stejné, jen filtruje stažené pole) ---
-  searchMovies(event: any) {
-    const query = event.target.value.toLowerCase();
-    if (!query || query === '') {
-      this.filteredMovies = [...this.movies];
-    } else {
-      this.filteredMovies = this.movies.filter(m => 
-        m.title.toLowerCase().includes(query)
-      );
-    }
-  }
-
-  getAverageRating(): number {
-    if (this.movies.length === 0) return 0;
-    const total = this.movies.reduce((sum, movie) => sum + movie.rating, 0);
-    return parseFloat((total / this.movies.length).toFixed(1));
   }
 
   async openOptions(movie: Movie) {
@@ -164,15 +146,36 @@ ngOnInit() {
         {
           text: 'Cancel',
           icon: 'close',
-          role: 'cancel',
-          handler: () => {}
+          role: 'cancel'
         }
       ]
     });
     await actionSheet.present();
   }
 
-  // --- ŘAZENÍ (Zůstává) ---
+  async deleteMovie(movie: Movie) {
+    if (!this.userId || !movie.id) return;
+    const movieDocRef = doc(this.firestore, `users/${this.userId}/movies/${movie.id}`);
+    await deleteDoc(movieDocRef);
+  }
+
+  searchMovies(event: any) {
+    const query = event.target.value.toLowerCase();
+    if (!query || query === '') {
+      this.filteredMovies = [...this.movies];
+    } else {
+      this.filteredMovies = this.movies.filter(m => 
+        m.title.toLowerCase().includes(query)
+      );
+    }
+  }
+
+  getAverageRating(): number {
+    if (this.movies.length === 0) return 0;
+    const total = this.movies.reduce((sum, movie) => sum + movie.rating, 0);
+    return parseFloat((total / this.movies.length).toFixed(1));
+  }
+
   async openSortMenu() {
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Sort Collection By',

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from '@angular/fire/auth';
-import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab2',
@@ -16,9 +15,13 @@ export class Tab2Page implements OnInit {
   password = '';
   userEmail: string | null = null;
 
+  // NOVÉ: Proměnné pro zprávu pod tlačítkem
+  statusMessage: string | null = null;
+  statusColor: string = 'danger'; // 'danger' (červená) nebo 'success' (zelená)
+
   constructor(
-    private auth: Auth,
-    private toastCtrl: ToastController
+    private auth: Auth
+    // ToastController už nepotřebujeme
   ) {
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
@@ -34,37 +37,33 @@ export class Tab2Page implements OnInit {
 
   toggleMode() {
     this.isLogin = this.authMode === 'login';
+    this.statusMessage = null; // Vyčistit zprávu při přepnutí
   }
 
   async submit() {
-    // Základní kontrola, jestli je něco vyplněno
+    // Vyčistit předchozí zprávy
+    this.statusMessage = null;
+
     if (!this.email || !this.password) {
-      this.showToast('Zadejte prosím email a heslo.', 'warning');
+      this.showStatus('Zadejte prosím email a heslo.', 'warning');
       return;
     }
-
-    // Pokud je to registrace, kontrolujeme i Username (pokud ho používáš)
-    // if (!this.isLogin && !this.username) { ... } // (Odkomentuj, pokud jsi nechal username)
 
     try {
       if (this.isLogin) {
         // --- PŘIHLÁŠENÍ ---
         await signInWithEmailAndPassword(this.auth, this.email, this.password);
-        this.showToast('Vítejte zpět!', 'success');
+        this.showStatus('Vítejte zpět!', 'success');
       } else {
         // --- REGISTRACE ---
-        const userCredential = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
-        
-        // (Zde případně kód pro updateProfile, pokud ho používáš)
-        
-        this.showToast('Účet byl úspěšně vytvořen!', 'success');
+        await createUserWithEmailAndPassword(this.auth, this.email, this.password);
+        this.showStatus('Účet byl úspěšně vytvořen!', 'success');
       }
     } catch (e: any) {
-      console.error('Chyba přihlášení:', e); // Vypíše chybu do konzole pro tebe
+      console.error('Chyba přihlášení:', e);
 
-      let message = 'Nastala neznámá chyba.'; // Výchozí hláška
+      let message = 'Nastala neznámá chyba.';
 
-      // PŘEKLAD CHYBOVÝCH KÓDŮ Z FIREBASE
       switch (e.code) {
         case 'auth/invalid-credential':
         case 'auth/user-not-found':
@@ -78,18 +77,17 @@ export class Tab2Page implements OnInit {
           message = 'Zadaný email nemá správný formát.';
           break;
         case 'auth/weak-password':
-          message = 'Heslo je příliš slabé (musí mít min. 6 znaků).';
+          message = 'Heslo je příliš slabé (min. 6 znaků).';
           break;
         case 'auth/network-request-failed':
           message = 'Zkontrolujte připojení k internetu.';
           break;
         case 'auth/too-many-requests':
-          message = 'Příliš mnoho pokusů. Zkuste to chvíli později.';
+          message = 'Příliš mnoho pokusů. Zkuste to později.';
           break;
       }
 
-      // Zobrazíme českou hlášku červeně
-      this.showToast(message, 'danger');
+      this.showStatus(message, 'danger');
     }
   }
 
@@ -97,10 +95,14 @@ export class Tab2Page implements OnInit {
     await signOut(this.auth);
   }
 
-  async showToast(msg: string, color: string) {
-    const toast = await this.toastCtrl.create({
-      message: msg, duration: 2000, color: color, position: 'top'
-    });
-    toast.present();
+  // NOVÁ FUNKCE: Místo Toastu nastaví proměnnou
+  showStatus(msg: string, color: string) {
+    this.statusMessage = msg;
+    this.statusColor = color;
+
+    // Zpráva zmizí sama po 3 sekundách
+    setTimeout(() => {
+      this.statusMessage = null;
+    }, 3000);
   }
 }

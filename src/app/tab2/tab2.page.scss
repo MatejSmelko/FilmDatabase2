@@ -1,7 +1,152 @@
-ion-content { --background: #181920; }
-.auth-container { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
-.logo { text-align: center; margin-bottom: 30px; ion-icon { font-size: 80px; color: #e91e63; } h2 { color: #fff; margin-top: 10px; } }
-.segment-box { background: #252630; padding: 4px; border-radius: 8px; margin-bottom: 30px; ion-segment-button { --color-checked: #e91e63; --indicator-color: #fff; --color: #666; } }
-.custom-input { background: #252630; border-radius: 12px; padding: 5px 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); ion-input { --color: #fff; --placeholder-color: #666; } }
-.submit-btn { margin-top: 20px; height: 50px; --border-radius: 12px; font-weight: bold; --background: #e91e63; }
-.profile-container { text-align: center; margin-top: 50px; color: #fff; .avatar { width: 100px; height: 100px; background: #e91e63; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: bold; } }
+ion-content {
+  --background: #181920;
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 0 24px; 
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 40px; // Trochu víc místa pod logem
+
+  ion-icon {
+    font-size: 80px;
+    color: #5bbdf5;
+  }
+
+  h2 {
+    color: #fff;
+    margin-top: 15px;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.segment-box {
+  background: #252630;
+  padding: 4px;
+  border-radius: 12px; // Trochu kulatější
+  margin-bottom: 30px;
+
+  ion-segment-button {
+    --color-checked: #5bbdf5;
+    --indicator-color: #fff;
+    --color: #888;
+    font-weight: 500;
+  }
+}
+
+.custom-input {
+  background: #252630;
+  border-radius: 12px;
+  padding: 8px 16px; // Větší vnitřní prostor inputu
+  margin-bottom: 20px; // Větší mezera mezi inputy
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+
+  // Ikonka uvnitř inputu (pokud ji tam máš)
+  .input-icon {
+    color: #666;
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+
+  ion-input {
+    --color: #fff;
+    --placeholder-color: #666;
+    font-size: 1rem;
+  }
+
+  // Efekt při kliknutí
+  &:focus-within {
+    border-color: #5bbdf5;
+    background: #2a2b36;
+  }
+}
+
+.submit-btn {
+  margin-top: 30px;
+  height: 54px; // Vyšší tlačítko se lépe mačká
+  --border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  --background: #5bbdf5;
+}
+
+.profile-container {
+  text-align: center;
+  margin-top: 60px;
+  color: #fff;
+  padding: 0 24px; // Odsazení i pro profil
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    background: #5bbdf5;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+  }
+
+  p {
+    color: #aaa;
+    margin-bottom: 40px;
+  }
+}
+.message-box {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  animation: slideUp 0.3s ease-out;
+
+  ion-icon { font-size: 1.4rem; }
+
+  // Červená (chyba)
+  &.danger {
+    background: rgba(255, 73, 97, 0.15);
+    color: #ff4961;
+    border: 1px solid rgba(255, 73, 97, 0.3);
+  }
+  
+  // Oranžová (varování)
+  &.warning {
+    background: rgba(255, 196, 9, 0.15);
+    color: #ffc409;
+    border: 1px solid rgba(255, 196, 9, 0.3);
+  }
+
+  // Zelená (úspěch)
+  &.success {
+    background: rgba(47, 223, 117, 0.15);
+    color: #2fdf75;
+    border: 1px solid rgba(47, 223, 117, 0.3);
+  }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -32,7 +32,7 @@ label {
 
   // Když uživatel klikne do inputu
   &:focus-within {
-    border-color: #e91e63; // Růžový rámeček
+    border-color: #5bbdf5; // Růžový rámeček
     background: #2a2b36; // O trošičku světlejší pozadí
     box-shadow: 0 4px 15px rgba(233, 30, 99, 0.15); // Jemná záře
   }
@@ -67,14 +67,14 @@ ion-textarea {
   margin-bottom: 25px;
   position: relative;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  border: 2px solid #e91e63;
+  border: 2px solid #5bbdf5;
 
   .remove-btn {
     position: absolute;
     top: 15px;
     right: 15px;
     background: rgba(20, 20, 20, 0.85);
-    color: #ff4961;
+    color: #5bbdf5;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -95,7 +95,7 @@ ion-textarea {
   --border-color: #444;
   --border-radius: 16px;
   --background: transparent;
-  --color: #e91e63; // Růžový text
+  --color: #5bbdf5; // Růžový text
   height: auto;
   padding: 35px 0;
   margin-top: 5px;
@@ -109,12 +109,12 @@ ion-textarea {
   ion-icon {
     font-size: 2rem;
     margin-bottom: 5px;
-    color: #e91e63;
+    color: #5bbdf5;
   }
 
   &:hover {
     --background: rgba(233, 30, 99, 0.05);
-    --border-color: #e91e63;
+    --border-color: #5bbdf5;
   }
 }
 
@@ -142,7 +142,7 @@ ion-textarea {
   margin-top: 40px;
   margin-bottom: 15px;
   font-size: 1rem;
-  color: #e91e63; // Růžová (už ne červená!)
+  color: #5bbdf5; // Růžová (už ne červená!)
   letter-spacing: 1px;
 }
 
@@ -216,7 +216,7 @@ ion-textarea {
     border-bottom: 1px solid rgba(255,255,255,0.05);
     
     &:hover {
-      background: #e91e63;
+      background: #5bbdf5;
       color: white;
     }
   }
