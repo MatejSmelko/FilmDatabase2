@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, ActionSheetController } from '@ionic/angular';
 import { AddMovieModalComponent } from '../add-movie-modal/add-movie-modal.component';
 import { Movie } from '../interface/movie.interface';
+
+// Importy pro Firebase (Databáze + Auth)
 import { Firestore, collection, collectionData, addDoc, doc, deleteDoc, updateDoc, query } from '@angular/fire/firestore';
-import { Auth, onAuthStateChanged } from '@angular/fire/auth';
-import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Auth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile } from '@angular/fire/auth';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -15,33 +16,48 @@ import { Observable, Subscription } from 'rxjs';
 })
 export class Tab1Page implements OnInit {
 
+  // --- PROMĚNNÉ PRO FILMY ---
   movies: Movie[] = [];
   filteredMovies: Movie[] = [];
-  currentView: string = 'collection';
-  
   userId: string | null = null;
   userEmail: string | null = null;
   movieSubscription: Subscription | null = null;
+
+  // --- PROMĚNNÉ PRO ZOBRAZENÍ A AUTH ---
+  currentView: string = 'collection'; // Řídí, co je vidět (collection | login | register)
+  
+  // Data formulářů
+  email = '';
+  password = '';
+  username = ''; // Jen pro registraci
+
+  // Chybové hlášky
+  statusMessage: string | null = null;
+  statusColor: string = 'danger';
 
   constructor(
     private modalCtrl: ModalController,
     private actionSheetCtrl: ActionSheetController,
     private firestore: Firestore,
-    private auth: Auth,
-    private router: Router
+    public auth: Auth 
   ) {}
 
   ngOnInit() {
+    // Sledujeme, jestli je uživatel přihlášen
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
+        // PŘIHLÁŠEN
         this.userId = user.uid;
-        this.userEmail = user.displayName || user.email?.split('@')[0] || 'User';
+        this.userEmail = user.email;
+        this.currentView = 'collection'; // Ukážeme filmy
         this.loadMoviesFromFirebase();
       } else {
+        // ODHLÁŠEN
         this.userId = null;
         this.userEmail = null;
         this.movies = [];
         this.filteredMovies = [];
+        this.currentView = 'login'; // Ukážeme přihlášení
         if (this.movieSubscription) {
           this.movieSubscription.unsubscribe();
         }
@@ -49,62 +65,99 @@ export class Tab1Page implements OnInit {
     });
   }
 
+  // ==========================================
+  // LOGIKA PŘIHLÁŠENÍ A REGISTRACE
+  // ==========================================
+
+  async submitAuth(type: 'login' | 'register') {
+    this.statusMessage = null;
+
+    if (!this.email || !this.password) {
+      this.showStatus('Zadejte prosím email a heslo.', 'warning');
+      return;
+    }
+
+    try {
+      if (type === 'login') {
+        // Přihlášení
+        await signInWithEmailAndPassword(this.auth, this.email, this.password);
+        this.showStatus('Vítejte zpět!', 'success');
+      } else {
+        // Registrace
+        const userCredential = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
+        
+        // Pokud zadal jméno, uložíme ho
+        if (this.username && userCredential.user) {
+          await updateProfile(userCredential.user, { displayName: this.username });
+        }
+        this.showStatus('Účet byl úspěšně vytvořen!', 'success');
+      }
+    } catch (e: any) {
+      this.handleAuthError(e);
+    }
+  }
+
+  async logout() {
+    await signOut(this.auth);
+    this.showStatus('Odhlášeno.', 'success');
+  }
+
+  // Překlad chyb z Firebase do češtiny
+  handleAuthError(e: any) {
+    let msg = 'Nastala neznámá chyba.';
+    switch (e.code) {
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        msg = 'Nesprávný email nebo heslo.';
+        break;
+      case 'auth/email-already-in-use':
+        msg = 'Tento email už je zaregistrovaný.';
+        break;
+      case 'auth/weak-password':
+        msg = 'Heslo je příliš slabé (min. 6 znaků).';
+        break;
+      case 'auth/invalid-email':
+        msg = 'Zadaný email nemá správný formát.';
+        break;
+      case 'auth/network-request-failed':
+        msg = 'Zkontrolujte připojení k internetu.';
+        break;
+      case 'auth/too-many-requests':
+        msg = 'Příliš mnoho pokusů. Zkuste to později.';
+        break;
+    }
+    this.showStatus(msg, 'danger');
+  }
+
+  // Pomocná funkce pro zobrazení hlášky pod tlačítkem
+  showStatus(msg: string, color: string) {
+    this.statusMessage = msg;
+    this.statusColor = color;
+    // Hláška zmizí po 3 sekundách
+    setTimeout(() => {
+      this.statusMessage = null;
+    }, 3000);
+  }
+
+
+  // ==========================================
+  // LOGIKA FILMŮ (FIRESTORE)
+  // ==========================================
+
   loadMoviesFromFirebase() {
     if (!this.userId) return;
-    const moviesRef = collection(this.firestore, `users/${this.userId}/movies`);
-    const q = query(moviesRef); 
+
+    // Načítáme filmy z cesty: users / MOJE_ID / movies
+    const q = query(collection(this.firestore, `users/${this.userId}/movies`));
+    
     this.movieSubscription = collectionData(q, { idField: 'id' }).subscribe((data) => {
       this.movies = data as Movie[];
-      this.filteredMovies = [...this.movies];
+      this.filteredMovies = [...this.movies]; // Aktualizace seznamu
     });
   }
 
-  // Tady byl asi problém (chybějící závorka před touto funkcí)
-  async openProfileMenu() {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: `Logged in as ${this.userEmail}`,
-      buttons: [
-        {
-          text: 'Log Out',
-          role: 'destructive',
-          icon: 'log-out-outline',
-          handler: async () => {
-            await this.auth.signOut();
-            this.router.navigate(['/tabs/tab2']);
-          }
-        },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await actionSheet.present();
-  }
-
-  async openGuestMenu() {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'You are currently a Guest',
-      subHeader: 'Sign in to save your movies.',
-      buttons: [
-        {
-          text: 'Log In',
-          icon: 'log-in-outline',
-          handler: () => {
-            this.router.navigate(['/tabs/tab2']);
-          }
-        },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await actionSheet.present();
-  }
-
+  // Otevření modálu pro přidání/editaci
   async openAddModal(movieToEdit?: Movie) {
     const modal = await this.modalCtrl.create({
       component: AddMovieModalComponent,
@@ -114,20 +167,24 @@ export class Tab1Page implements OnInit {
 
     modal.onWillDismiss().then(async (data) => {
       if (data.role === 'confirm' && this.userId) {
-        const resultData = data.data;
-        if (resultData.id && this.movies.some(m => m.id === resultData.id)) {
-          const movieDocRef = doc(this.firestore, `users/${this.userId}/movies/${resultData.id}`);
-          await updateDoc(movieDocRef, resultData);
+        const res = data.data;
+
+        if (res.id && this.movies.some(m => m.id === res.id)) {
+          // Editace existujícího
+          const docRef = doc(this.firestore, `users/${this.userId}/movies/${res.id}`);
+          await updateDoc(docRef, res);
         } else {
-          const { id, ...movieWithoutId } = resultData; 
-          const moviesRef = collection(this.firestore, `users/${this.userId}/movies`);
-          await addDoc(moviesRef, movieWithoutId);
+          // Přidání nového (odstraníme případné fake ID)
+          const { id, ...cleanMovie } = res;
+          const colRef = collection(this.firestore, `users/${this.userId}/movies`);
+          await addDoc(colRef, cleanMovie);
         }
       }
     });
     return await modal.present();
   }
 
+  // Menu možností (Edit/Delete)
   async openOptions(movie: Movie) {
     const actionSheet = await this.actionSheetCtrl.create({
       header: movie.title,
@@ -135,13 +192,13 @@ export class Tab1Page implements OnInit {
         {
           text: 'Edit',
           icon: 'create',
-          handler: () => { this.openAddModal(movie); }
+          handler: () => this.openAddModal(movie)
         },
         {
           text: 'Delete',
           role: 'destructive',
           icon: 'trash',
-          handler: () => { this.deleteMovie(movie); }
+          handler: () => this.deleteMovie(movie)
         },
         {
           text: 'Cancel',
@@ -153,12 +210,14 @@ export class Tab1Page implements OnInit {
     await actionSheet.present();
   }
 
+  // Smazání filmu
   async deleteMovie(movie: Movie) {
     if (!this.userId || !movie.id) return;
-    const movieDocRef = doc(this.firestore, `users/${this.userId}/movies/${movie.id}`);
-    await deleteDoc(movieDocRef);
+    const docRef = doc(this.firestore, `users/${this.userId}/movies/${movie.id}`);
+    await deleteDoc(docRef);
   }
 
+  // Vyhledávání
   searchMovies(event: any) {
     const query = event.target.value.toLowerCase();
     if (!query || query === '') {
@@ -170,12 +229,7 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  getAverageRating(): number {
-    if (this.movies.length === 0) return 0;
-    const total = this.movies.reduce((sum, movie) => sum + movie.rating, 0);
-    return parseFloat((total / this.movies.length).toFixed(1));
-  }
-
+  // Menu pro řazení
   async openSortMenu() {
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Sort Collection By',

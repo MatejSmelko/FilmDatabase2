@@ -1,20 +1,32 @@
-// Barvy
 $primary-bg: #121212;
 $card-bg: #1e1e1e;
-$accent: #5bbdf5; // Růžová
+$accent: #5bbdf5;
 
 ion-content {
   --background: #{$primary-bg};
 }
 
+// --- HLAVIČKA (HEADER) ---
+// Styl pro logo/nadpis v hlavičce
 .app-logo {
   font-weight: 800;
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: center;      // Vertikální střed
+  justify-content: center;  // Horizontální střed
+  gap: 0px;                // Větší mezera mezi ikonou a textem
+  height: 100%;             // Aby to využilo celou výšku lišty
+  
+  // Styl pro obrázek loga
+  .logo-img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+    padding-left: 15px;
+    padding-top: 5px;
+  }
 }
 
-// Tlačítko New Movie v hlavičce
+
 ion-toolbar ion-button {
   --background: #{$accent};
   --border-radius: 4px;
@@ -23,81 +35,88 @@ ion-toolbar ion-button {
   margin-right: 10px;
 }
 
+// Kontejner kolem přepínače Collection/Login/Register
 .segment-container {
   padding: 10px 16px;
+  color: #5bbdf5;
   background: #121212;
   margin-bottom: 20px;
 }
 
+// Styl pro nadpisy stránek
 .page-title {
   padding: 0 16px;
-  color: #fff;
-  font-size: 1.5rem;
-  font-weight: 700;
+  color: #fff;              // Bílá barva textu
+  font-size: 1.5rem;        // Velikost písma
+  font-weight: 700;         // Tučné písmo
 }
 
-// Empty State
+// --- PRÁZDNÝ STAV (EMPTY STATE) ---
+// Zobrazí se, když nejsou žádné filmy
 .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 60vh;
-  color: #fff;
+  display: flex;            // Flexbox pro centrování
+  flex-direction: column;   // Prvky pod sebou
+  align-items: center;      // Zarovnání na střed horizontálně
+  justify-content: center;  // Zarovnání na střed vertikálně
+  height: 60vh;             // Výška přes 60% obrazovky
+  color: #fff;              // Bílá barva textu
   
   .illustration {
-    font-size: 100px;
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 100px;       // Velká ikona kamery
+    color: #333;            // Tmavě šedá barva ikony
+    margin-bottom: 20px;    // Mezera pod ikonou
   }
   
-  h2 { margin-bottom: 5px; }
-  p { color: #888; margin-bottom: 20px; }
+  h2 { margin-bottom: 5px; } // Nadpis
+  p { color: #888; margin-bottom: 20px; } // Popis (šedý)
   
   ion-button {
-    --background: #{$accent};
+    --background: #{$accent}; // Tlačítko "Add Movie" (modré)
   }
 }
 
-// Aby se sloupce v mřížce roztáhly na stejnou výšku
-ion-col {
-  display: flex; 
-}
+// --- MŘÍŽKA A KARTY FILMŮ ---
+// Nastavení sloupce mřížky pro správnou výšku karet
+ion-col { display: flex; }
 
+// Hlavní styl pro kartu filmu
 .movie-card {
-  background: #1e1e1e;
-  margin: 5px;
-  width: 100%;        // 👈 NOVÉ: Roztáhne se na šířku sloupce
-  height: 100%;       // 👈 NOVÉ: Roztáhne se na výšku sloupce (aby byly stejné)
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  overflow: hidden;
-  display: flex;      // 👈 Umožní nám pracovat s obsahem uvnitř
-  flex-direction: column; // Pod sebe
+  background: #1e1e1e;      // Tmavé pozadí karty
+  margin: 5px;              // Odsazení mezi kartami
+  width: 100%;              // Roztáhne se na šířku sloupce
+  height: 100%;             // Roztáhne se na výšku sloupce (stejně vysoké karty)
+  border-radius: 12px;      // Zaoblené rohy
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3); // Stín pod kartou
+  overflow: hidden;         // Ořízne obsah, který přetéká (např. rohy obrázku)
+  display: flex;            // Flexbox pro rozložení obsahu uvnitř
+  flex-direction: column;   // Obrázek nahoře, text dole
 
+  // Kontejner pro obrázek (plakát)
   .image-container {
-    height: 250px;
-    width: 100%;
-    background-color: #333;
+    height: 250px;          // Pevná výška obrázku
+    width: 100%;            // Šířka přes celou kartu
+    background-color: #333; // Šedé pozadí při načítání
     position: relative;
-    flex-shrink: 0; // 👈 NOVÉ: Obrázek se nikdy nesmrskne
+    flex-shrink: 0;         // Obrázek se nesmí zmenšit
     
     img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover;    // Obrázek vyplní plochu bez deformace (ořízne se)
       display: block;
     }
   }
 
+  // Textový obsah karty
   .card-content {
     padding: 12px;
-    padding-bottom: 15px;
-    color: #fff;
-    flex: 1; // 👈 KLÍČOVÉ: Tento blok vyplní veškeré zbylé místo
+    padding-bottom: 20px;   // Větší mezera dole (pod hvězdami)
+    color: #fff;            // Bílý text
+    flex: 1;                // Tento blok vyplní veškeré zbylé místo (tlačí patičku dolů)
     display: flex;
-    flex-direction: column;
+    flex-direction: column; // Prvky pod sebou
 
+    // Nadpis filmu
     h3 {
       margin: 0;
       font-size: 1.1rem;
@@ -105,143 +124,196 @@ ion-col {
       line-height: 1.3;
       margin-bottom: 5px;
       
-      // 👈 NOVÉ: Oříznutí názvu po 2 řádcích (aby karta nebyla nekonečná)
+      // Oříznutí textu na max 2 řádky (s tečkami na konci)
       display: -webkit-box;
-      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    // Meta informace (Rok a tři tečky)
     .meta {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-between; // Rok vlevo, tečky vpravo
       align-items: center;
-      color: #aaa;
+      color: #aaa;          // Šedý text
       font-size: 0.9rem;
       margin-bottom: 8px;
 
-      span {
-        font-weight: 600;
-        color: #ccc;
-      }
+      span { font-weight: 600; color: #ccc; } // Rok
 
+      // Tlačítko tří teček (možnosti)
       .more-opt {
         font-size: 1.4rem;
         color: #fff;
-        padding: 5px;
-        margin-right: -5px;
+        padding: 5px;       // Zvětšení klikací plochy
+        margin-right: -5px; // Zarovnání k okraji
         cursor: pointer;
-        &:active { opacity: 0.6; }
+        &:active { opacity: 0.6; } // Efekt stisknutí
       }
     }
 
+    // Žánry (štítky)
     .tags {
       margin-bottom: 15px;
-      
       ion-badge {
-        --background: #333;
-        --color: #e91e63;
+        --background: #333; // Tmavé pozadí štítku
         font-weight: 600;
         letter-spacing: 0.5px;
         padding: 4px 8px;
       }
     }
 
+    // Hodnocení (hvězdičky)
     .rating {
       display: flex;
       gap: 2px;
-      margin-top: auto; // 👈 KLÍČOVÉ: "Auto" okraj nahoře odtlačí hvězdy úplně dolů
-      
-      ion-icon {
-        font-size: 1.1rem;
-      }
+      margin-top: auto;     // Tlačí hvězdy na dno karty (díky flex: 1 u rodiče)
+      ion-icon { font-size: 1.1rem; }
     }
   }
 }
 
-// Styl pro statistické karty
-.stat-card {
-  background: #252630; 
-  text-align: center;
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  border-radius: 12px;
-  
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #fff; 
-    margin: 0;
-  }
-  
-  p {
-    color: #888;
-    margin-top: 5px;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-  }
+// Odsazení spodní části mřížky, aby poslední filmy nezalezly za lištu
+ion-grid {
+  padding-bottom: 100px; 
+}
 
-  .rating-flex {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    
-    ion-icon { font-size: 1.5rem; }
+// --- STYLY PRO PŘIHLÁŠENÍ A REGISTRACI (AUTH) ---
+
+// Obal formuláře (centrování)
+.auth-wrapper {
+  display: flex;
+  justify-content: center;  // Horizontálně na střed
+  padding-top: 40px;        // Odsazení shora
+}
+
+// Samotný box formuláře
+.auth-box {
+  width: 100%;
+  max-width: 400px;         // Maximální šířka (aby to nebylo moc široké na PC)
+  padding: 0 20px;          // Odsazení po stranách
+  text-align: center;       // Text na střed
+
+  h2 {
+    font-size: 2rem;        // Velký nadpis
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+  
+  .subtitle {
+    color: #888;            // Šedý podnadpis
+    margin-bottom: 30px;
   }
 }
 
-  ion-segment-button {
-    --color-checked: #5bbdf5;
-    --indicator-color: #ffffff;
-    --color: #666666;
-  }
-  ion-segment {
-    background: rgba(255, 255, 255, 0.1); 
-    border-radius: 8px;
-    padding: 2px;
+// Vlastní styl pro vstupní pole (Input)
+.custom-input {
+  background: #252630;      // Tmavě šedé pozadí
+  border-radius: 12px;      // Zaoblené rohy
+  padding: 8px 16px;        // Vnitřní odsazení
+  margin-bottom: 15px;      // Mezera pod polem
+  border: 1px solid rgba(255,255,255,0.05); // Jemný rámeček
+  display: flex;            // Flexbox pro ikonu a input vedle sebe
+  align-items: center;
+
+  // Ikona uvnitř inputu
+  .input-icon {
+    color: #666;
+    margin-right: 10px;
+    font-size: 1.2rem;
   }
 
-  // Kontejner pro Searchbar a Sort tlačítko
-.search-sort-container {
+  ion-input {
+    --color: #fff;          // Bílá barva textu
+    --placeholder-color: #666; // Šedý placeholder
+  }
+
+}
+
+// Tlačítko odeslání (Login/Register)
+.submit-btn {
+  margin-top: 20px;
+  height: 50px;
+  --border-radius: 12px;
+  font-weight: bold;
+}
+
+// --- CHYBOVÉ HLÁŠKY ---
+// Boxík pro zprávy (chyba/úspěch) pod tlačítkem
+.message-box {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 10px; // Mezera mezi nimi
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  
+  // Červená varianta (chyba)
+  &.danger {
+    background: #5bbdf5;
+  }
+  // Zelená varianta (úspěch)
+  &.success {
+    background: #5bbdf5;
+  }
+}
+
+// Animace příletu (fade in) pro plynulý přechod mezi stavy
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// --- VYHLEDÁVÁNÍ A FILTROVÁNÍ ---
+.search-sort-container {
+  display: flex;            // Vedle sebe
+  align-items: center;
+  gap: 10px;                // Mezera
   margin-bottom: 10px;
+  padding: 0 10px;
 
   .custom-search {
     padding-inline-start: 0;
     padding-inline-end: 0;
-    width: 100%; // Vyhledávání zabere zbytek místa
+    --padding-start: 0;
+    width: 100%;    
   }
 
+  // Tlačítko filtru (čtvercové)
   .sort-btn {
     --border-radius: 8px;
-    height: 42px; // Stejná výška jako searchbar
+    height: 42px;
     width: 42px;
     margin: 0;
     --padding-start: 0;
     --padding-end: 0;
   }
 }
-// Styly pro uživatelský odznak vlevo
+
+// --- UŽIVATELSKÝ ODZNAK (V HLAVIČCE) ---
 .user-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.05); // Jemně podbarvené
+  background: rgba(255, 255, 255, 0.05); // Jemné podbarvení
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 20px;      // Pilulkový tvar
   margin-left: 10px;
   font-size: 0.85rem;
-  cursor: pointer; 
+  cursor: pointer;          // Ukazuje, že je to klikatelné
   transition: opacity 0.2s;
 
   &:active {
-    opacity: 0.7; // Při kliknutí to trochu problikne
+    opacity: 0.7;           // Zprůhlednění při kliknutí
   }
   
   ion-icon {
@@ -251,25 +323,9 @@ ion-col {
   .username {
     font-weight: 600;
     color: #fff;
-    max-width: 80px; // Aby dlouhé jméno nerozbilo hlavičku
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 80px;        // Omezení šířky jména
+    white-space: nowrap;    // Zákaz zalamování
+    overflow: hidden;       // Skrytí přetékajícího textu
+    text-overflow: ellipsis;// Tři tečky na konci
   }
-
-  &.guest {
-    opacity: 0.5; // Host bude trochu průhledný
-  }
-}
-
-// Úprava loga, aby bylo hezky uprostřed (nebo ho můžeš nechat vlevo, pokud chceš)
-.app-logo {
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #fff;
-}
-
-// Odsazení spodní části mřížky, aby poslední filmy nezalezly za lištu
-ion-grid {
-  padding-bottom: 100px; 
 }

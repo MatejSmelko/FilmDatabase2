@@ -1,90 +1,70 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="dark">
     
+    <!-- HEADER: Pokud je přihlášen, zobrazíme info, jinak logo -->
     <ion-buttons slot="start">
-      <div class="user-badge" *ngIf="userEmail" (click)="openProfileMenu()">
-        <ion-icon name="person-circle" color="secondary"></ion-icon>
-        <span class="username">{{ userEmail.split('@')[0] }}</span>
-      </div>
-      
-      <div class="user-badge guest" *ngIf="!userEmail" (click)="openGuestMenu()">
-        <ion-icon name="person-outline"></ion-icon>
-        <span>Guest</span>
+      <div class="user-badge" *ngIf="userEmail" (click)="logout()">
+        <ion-icon name="log-out-outline" color="secondary"></ion-icon>
+        <span class="username">Logout</span>
       </div>
     </ion-buttons>
 
     <ion-title class="app-logo ion-text-center">
-      MovieDB
-    </ion-title>
+      <img src="assets/icon/logo.png" alt="MovieDB Logo" class="logo-img"></ion-title>
 
+    <!-- HEADER PRAVÁ STRANA: Přidat film (jen když je přihlášen) -->
     <ion-buttons slot="end">
-      <ion-button color="secondary" fill="solid" (click)="openAddModal()">
-        <ion-icon name="add" slot="icon-only"></ion-icon> </ion-button>
+      <ion-button *ngIf="userEmail" color="secondary" fill="solid" (click)="openAddModal()">
+        <ion-icon name="add" slot="icon-only"></ion-icon>
+      </ion-button>
     </ion-buttons>
 
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true" color="dark">
   
+  <!-- HLAVNÍ PŘEPÍNAČ -->
   <div class="segment-container">
     <ion-segment [(ngModel)]="currentView" mode="ios">
-      <ion-segment-button value="collection">
+      
+      <!-- Záložka Collection (vždy viditelná, ale prázdná pro hosta) -->
+      <ion-segment-button value="collection" *ngIf="userEmail">
         <ion-label>Collection</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="stats">
-        <ion-label>Stats</ion-label>
+      <ion-segment-button value="login" *ngIf="userEmail">
+        <ion-label>Login</ion-label>
+      </ion-segment-button>
+
+      <!-- Záložky pro nepřihlášené -->
+      <ion-segment-button value="login" *ngIf="!userEmail">
+        <ion-label>Login</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="register" *ngIf="!userEmail">
+        <ion-label>Register</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
 
-  <div *ngIf="currentView === 'collection'">
+
+  <!-- 1. VIEW: KOLEKCE FILMŮ -->
+  <div *ngIf="currentView === 'collection'" class="fade-in">
     
-    <div class="header-row ion-padding-horizontal">
-      <h1 class="page-title" style="margin-bottom: 0;">Your Collection</h1>
-    </div>
-
-    <div class="search-sort-container ion-padding-horizontal">
-      
-      <ion-searchbar 
-        class="custom-search"
-        placeholder="Search movies..." 
-        color="dark" 
-        animated="true"
-        (ionInput)="searchMovies($event)">
-      </ion-searchbar>
-
+    <!-- Vyhledávání a filtry -->
+    <div class="search-sort-container">
+      <ion-searchbar class="custom-search" placeholder="Search..." color="dark" animated="false" (ionInput)="searchMovies($event)"></ion-searchbar>
       <ion-button color="secondary" fill="solid" class="sort-btn" (click)="openSortMenu()">
         <ion-icon slot="icon-only" name="filter"></ion-icon>
       </ion-button>
-      
     </div>
 
-    <div class="empty-state" *ngIf="movies.length === 0">
-      <div class="illustration">
-        <ion-icon name="videocam-outline"></ion-icon>
-      </div>
-      <h2>Your collection is empty!</h2>
-      <p>Add your first movie to get started.</p>
-      <ion-button color="secondary" (click)="openAddModal()">
-        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
-        Add a Movie
-      </ion-button>
-    </div>
-
-    <ion-grid *ngIf="movies.length > 0">
+    <!-- Seznam filmů -->
+    <ion-grid>
       <ion-row>
-        <ion-col size="12" *ngIf="filteredMovies.length === 0" class="ion-text-center">
-          <p style="color: #888; margin-top: 20px;">No movies found matching your search.</p>
-        </ion-col>
-
         <ion-col size="6" size-md="4" size-lg="3" *ngFor="let m of filteredMovies">
           <ion-card class="movie-card">
             <div class="image-container">
-              <img 
-                [src]="m.imageUrl" 
-                (error)="m.imageUrl = 'https://placehold.co/400x600/1e1e1e/e91e63?text=No+Image'"
-                alt="{{ m.title }}"
-              >
+              <img [src]="m.imageUrl" (error)="m.imageUrl='https://placehold.co/400x600/1e1e1e/e91e63?text=No+Image'">
             </div>
             <div class="card-content">
               <h3>{{ m.title }}</h3>
@@ -92,44 +72,75 @@
                 <span>{{ m.year }}</span>
                 <ion-icon name="ellipsis-vertical" class="more-opt" (click)="openOptions(m)"></ion-icon>
               </div>
-              <div class="tags">
-                <ion-badge color="medium">{{ m.genre || 'Unknown' }}</ion-badge>
-              </div>
+              <div class="tags"><ion-badge color="medium">{{ m.genre }}</ion-badge></div>
               <div class="rating">
-                 <ion-icon *ngFor="let star of [1,2,3,4,5]" 
-                           [name]="star <= m.rating ? 'star' : 'star-outline'" 
-                           color="warning"></ion-icon>
+                 <ion-icon *ngFor="let s of [1,2,3,4,5]" [name]="s <= m.rating ? 'star' : 'star-outline'" color="warning"></ion-icon>
               </div>
             </div>
           </ion-card>
         </ion-col>
       </ion-row>
     </ion-grid>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredMovies.length === 0">
+      <ion-icon name="videocam-outline" style="font-size: 60px; color: #333;"></ion-icon>
+      <p style="color: #666;">No movies found.</p>
+    </div>
   </div>
 
-  <div *ngIf="currentView === 'stats'" class="ion-padding">
-    <h1 class="page-title">Statistics</h1>
-    <ion-row>
-      <ion-col size="6">
-        <ion-card class="stat-card">
-          <ion-card-content>
-            <h1>{{ movies.length }}</h1>
-            <p>Movies</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      <ion-col size="6">
-        <ion-card class="stat-card">
-          <ion-card-content>
-            <div class="rating-flex">
-              <h1>{{ getAverageRating() }}</h1>
-              <ion-icon name="star" color="warning"></ion-icon>
-            </div>
-            <p>Avg Rating</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
+
+  <!-- 2. VIEW: LOGIN -->
+  <div *ngIf="currentView === 'login'" class="auth-wrapper fade-in">
+    <div class="auth-box">
+      <h2>Welcome Back</h2>
+      <p class="subtitle">Please sign in to your account</p>
+
+      <div class="custom-input">
+        <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+        <ion-input type="email" placeholder="Email" [(ngModel)]="email"></ion-input>
+      </div>
+      <div class="custom-input">
+        <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+        <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+      </div>
+
+      <ion-button expand="block" color="secondary" class="submit-btn" (click)="submitAuth('login')">
+        Sign In
+      </ion-button>
+
+      <!-- Hláška pod tlačítkem -->
+      <div class="message-box" *ngIf="statusMessage" [ngClass]="statusColor">
+        <ion-icon [name]="statusColor === 'danger' ? 'alert-circle' : 'checkmark-circle'"></ion-icon>
+        <span>{{ statusMessage }}</span>
+      </div>
+    </div>
   </div>
 
-</ion-content>
+
+  <!-- 3. VIEW: REGISTER -->
+  <div *ngIf="currentView === 'register'" class="auth-wrapper fade-in">
+    <div class="auth-box">
+      <h2>Create Account</h2>
+      <p class="subtitle">Join us and start your collection</p>
+
+      <div class="custom-input">
+        <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+        <ion-input type="email" placeholder="Email" [(ngModel)]="email"></ion-input>
+      </div>
+      <div class="custom-input">
+        <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+        <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+      </div>
+
+      <ion-button expand="block" color="secondary" class="submit-btn" (click)="submitAuth('register')">
+        Sign Up
+      </ion-button>
+
+      <!-- Hláška pod tlačítkem -->
+      <div class="message-box" *ngIf="statusMessage" [ngClass]="statusColor">
+        <ion-icon [name]="statusColor === 'danger' ? 'alert-circle' : 'checkmark-circle'"></ion-icon>
+        <span>{{ statusMessage }}</span>
+      </div>
+    </div>
+  </div>

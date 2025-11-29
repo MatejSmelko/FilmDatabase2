@@ -32,9 +32,7 @@ label {
 
   // Když uživatel klikne do inputu
   &:focus-within {
-    border-color: #5bbdf5; // Růžový rámeček
-    background: #2a2b36; // O trošičku světlejší pozadí
-    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.15); // Jemná záře
+    background: #2a2b36;
   }
 
   ion-input, ion-textarea {
@@ -142,7 +140,7 @@ ion-textarea {
   margin-top: 40px;
   margin-bottom: 15px;
   font-size: 1rem;
-  color: #5bbdf5; // Růžová (už ne červená!)
+  color: #5bbdf5;
   letter-spacing: 1px;
 }
 
