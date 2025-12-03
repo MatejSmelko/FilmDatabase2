@@ -1,8 +1,8 @@
 // --- 1. GLOBÁLNÍ NASTAVENÍ OKNA ---
 ion-content {
-  --background: #181920; // O něco tmavší/elegantnější pozadí
-  --padding-start: 24px; // Větší odsazení zleva
-  --padding-end: 24px;   // Větší odsazení zprava
+  --background: #121212; 
+  --padding-start: 24px; 
+  --padding-end: 24px;  
   --padding-top: 20px;
   --padding-bottom: 20px;
 }
@@ -10,22 +10,22 @@ ion-content {
 // --- 2. TYPOGRAFIE NADPISŮ (LABELS) ---
 label {
   display: block;
-  color: #8890a0; // Jemná šedomodrá místo tvrdé bílé
-  font-size: 0.75rem; // Menší písmo
-  text-transform: uppercase; // Velká písmena
-  letter-spacing: 1.5px; // Rozestupy mezi písmeny
+  color: #fff; 
+  font-size: 0.75rem; 
+  text-transform: uppercase; 
+  letter-spacing: 1.5px; 
   font-weight: 700;
-  margin-top: 15px; // Více místa nad nadpisem
-  margin-bottom: 5px; // Více místa pod nadpisem
-  margin-left: 4px; // Jemné odsazení zleva
+  margin-top: 15px; 
+  margin-bottom: 5px; 
+  margin-left: 4px; 
 }
 
 // --- 3. INPUTY (ZADÁVACÍ POLE) ---
 .custom-input {
-  background: #252630; // Pozadí inputu
-  border: 1px solid rgba(255, 255, 255, 0.08); // Velmi jemný rámeček
-  border-radius: 12px; // Zaoblené rohy
-  padding: 4px 16px; // Vnitřní polstrování
+  background: #252630; 
+  border: 1px solid rgba(255, 255, 255, 0.08); 
+  border-radius: 12px;
+  padding: 4px 16px; 
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -44,7 +44,7 @@ label {
   
   // Ikonka šipky u výběru žánru
   .input-icon {
-    color: #666;
+    color: #fff;
     font-size: 1.2rem;
   }
 }
@@ -80,7 +80,7 @@ ion-textarea {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    backdrop-filter: blur(4px); // Efekt rozmazání pozadí
+    backdrop-filter: blur(4px);
     transition: transform 0.2s;
     
     &:active { transform: scale(0.9); }
@@ -90,10 +90,10 @@ ion-textarea {
 .dashed-btn {
   --border-style: dashed;
   --border-width: 2px;
-  --border-color: #444;
+  --border-color: #fff;
   --border-radius: 16px;
   --background: transparent;
-  --color: #5bbdf5; // Růžový text
+  --color: #5bbdf5;
   height: auto;
   padding: 35px 0;
   margin-top: 5px;
@@ -121,7 +121,7 @@ ion-textarea {
   align-items: center;
   text-align: center;
   font-size: 0.75rem;
-  color: #666;
+  color: #fff;
   font-weight: 700;
   margin: 10px 0;
   
@@ -140,7 +140,7 @@ ion-textarea {
   margin-top: 40px;
   margin-bottom: 15px;
   font-size: 1rem;
-  color: #5bbdf5;
+  color: #fff;
   letter-spacing: 1px;
 }
 
@@ -183,14 +183,12 @@ ion-textarea {
   
   // Tlačítko Cancel 
   ion-button[fill="clear"] {
-    color: #888;
-    &:hover { color: #fff; }
+    color: #fff;
   }
 
   // Tlačítko Create 
   ion-button[type="submit"] {
-      color: #888;
-      &:hover { color: #fff; }
+      color: #fff;
   }
 }
 

@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController, ToastController } from '@ionic/angular';
-import { Movie } from '../interface/movie.interface';
+import { Movie } from '../interface/movie.interface'; 
 
 @Component({
   selector: 'app-add-movie-modal',
@@ -21,18 +21,15 @@ export class AddMovieModalComponent implements OnInit {
 
   isEditing = false;
 
-  // Seznam všech žánrů
+  // Seznam žánrů
   allGenres: string[] = [
-    'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 
-    'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 
-    'History', 'Horror', 'Music', 'Musical', 'Mystery', 
-    'Romance', 'Sci-Fi', 'Sport', 'Thriller', 'War', 'Western'
+    'Akční', 'Dobrodružný', 'Animovaný', 'Biografický', 'Komedie', 
+    'Krimi', 'Dokumentární', 'Drama', 'Rodinný', 'Fantasy', 
+    'Historický', 'Horror', 'Hudební', 'Muzikálový', 'Mysteriozní', 
+    'Romantický', 'Sci-Fi', 'Sportovní', 'Thriller', 'Válečný', 'Western'
   ];
 
-  // Aktuálně nalezené shody
   filteredGenres: string[] = [];
-  
-  // Ovládá viditelnost našeptávače
   showSuggestions = false;
 
   constructor(
@@ -47,53 +44,40 @@ export class AddMovieModalComponent implements OnInit {
     }
   }
 
-  // --- NOVÉ: Funkce pro nahrání obrázku ---
+  // Nahrání obrázku
   onFileSelected(event: any) {
-    const file = event.target.files[0]; // Vezmeme první vybraný soubor
-    
+    const file = event.target.files[0];
     if (file) {
-      // Kontrola velikosti (volitelné): Varování, pokud je > 2MB
       if (file.size > 2 * 1024 * 1024) {
-        this.showToast('Image is too large! Try a smaller one.');
+        this.showToast('Obrázek je moc velký! (Max 2MB)');
         return;
       }
-
       const reader = new FileReader();
-      // Až se soubor načte, uložíme ho jako text (Base64)
       reader.onload = () => {
         this.movie.imageUrl = reader.result as string;
       };
-      // Spustíme čtení
       reader.readAsDataURL(file);
     }
   }
   
-  // 1. Funkce se volá při každém stisknutí klávesy
+  // Našeptávač žánrů
   onGenreInput(event: any) {
     const query = event.target.value;
-
-    // Pokud je políčko prázdné, skryjeme nabídku
     if (!query || query.trim() === '') {
       this.showSuggestions = false;
       return;
     }
-
-    // Filtrujeme seznam (ignorujeme velká/malá písmena)
     this.filteredGenres = this.allGenres.filter(g => 
       g.toLowerCase().startsWith(query.toLowerCase())
     );
-
-    // Pokud jsme něco našli, zobrazíme nabídku
     this.showSuggestions = this.filteredGenres.length > 0;
   }
 
-  // 2. Když uživatel klikne na položku v našeptávači
   selectGenre(genre: string) {
-    this.movie.genre = genre; // Vyplníme input
-    this.showSuggestions = false; // Skryjeme nabídku
+    this.movie.genre = genre;
+    this.showSuggestions = false;
   }
 
-  // Klikání na hvězdičky
   setRating(val: number) {
     this.movie.rating = val;
   }
@@ -104,13 +88,13 @@ export class AddMovieModalComponent implements OnInit {
 
   async saveMovie() {
     if (!this.movie.title) {
-      this.showToast('Please enter a movie title.');
+      this.showToast('Zadejte název filmu.');
       return;
     }
 
     const year = this.movie.year;
     if (!year || year < 1888 || year > 2030 || year.toString().length !== 4) {
-      this.showToast('Please enter a valid 4-digit year.');
+      this.showToast('Zadejte platný rok (např. 2023).');
       return;
     }
 

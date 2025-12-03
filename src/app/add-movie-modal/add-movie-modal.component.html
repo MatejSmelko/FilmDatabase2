@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="dark">
-    <ion-title>{{ isEditing ? 'Edit Movie' : 'Add a New Movie' }}</ion-title>
+    <ion-title>{{ isEditing ? 'Editovat film' : 'Přidat nový film' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">
         <ion-icon name="close"></ion-icon>
@@ -12,31 +12,31 @@
 <ion-content color="dark" class="ion-padding">
   <form (ngSubmit)="saveMovie()">
     
-    <label>Title</label>
+    <label>Název</label>
     <div class="custom-input">
-      <ion-input [(ngModel)]="movie.title" name="title" placeholder="e.g. The Matrix" required></ion-input>
+      <ion-input [(ngModel)]="movie.title" name="title" placeholder="např. Matrix" required></ion-input>
     </div>
 
-    <label>Description</label>
+    <label>Popis</label>
     <div class="custom-input">
-      <ion-textarea [(ngModel)]="movie.description" name="description" rows="3" placeholder="Movie plot..."></ion-textarea>
+      <ion-textarea [(ngModel)]="movie.description" name="description" rows="3" placeholder="Popis filmu"></ion-textarea>
     </div>
 
     <ion-row>
       <ion-col size="6">
-        <label>Release Year</label>
+        <label>Datum vydání</label>
         <div class="custom-input">
-          <ion-input type="number" [(ngModel)]="movie.year" name="year" placeholder="2025" min="1888" max="2099"></ion-input>
+          <ion-input type="number" [(ngModel)]="movie.year" name="year" placeholder="2025" min="1000" max="3000"></ion-input>
         </div>
       </ion-col>
       
-      <ion-col size="6" style="position: relative;"> <label>Genre</label>
+      <ion-col size="6" style="position: relative;"> <label>Žánr</label>
         <div class="custom-input">
           <ion-input 
             [(ngModel)]="movie.genre" 
             name="genre" 
             (ionInput)="onGenreInput($event)"
-            placeholder="Type genre..."
+            placeholder="Horror"
             autocomplete="off">
           </ion-input>
         </div>
@@ -52,7 +52,7 @@
       </ion-col>
     </ion-row>
 
-<label>Movie Poster</label>
+<label>Obrázek</label>
     
     <div class="image-preview" *ngIf="movie.imageUrl" [style.background-image]="'url(' + movie.imageUrl + ')'">
       <div class="remove-btn" (click)="movie.imageUrl = ''">
@@ -65,17 +65,17 @@
       
       <ion-button expand="block" color="medium" fill="outline" class="dashed-btn" (click)="fileInput.click()">
         <ion-icon name="image-outline" slot="start"></ion-icon>
-        Upload form Gallery
+        Nahrát z galerie
       </ion-button>
 
-      <div class="divider">OR PASTE URL</div>
+      <div class="divider">nebo vložit URL</div>
 
       <div class="custom-input">
         <ion-input [(ngModel)]="movie.imageUrl" name="imageUrl" placeholder="https://..."></ion-input>
       </div>
     </div>
 
-    <label class="rating-label">Rating: {{ movie.rating }}/5</label>
+    <label class="rating-label">Hodnocení: {{ movie.rating }}/5</label>
     <div class="star-rating">
       <ion-icon 
         *ngFor="let i of [1,2,3,4,5]" 
@@ -86,9 +86,9 @@
     </div>
 
     <div class="actions">
-      <ion-button fill="clear" color="light" (click)="dismiss()">Cancel</ion-button>
+      <ion-button fill="clear" color="light" (click)="dismiss()">Zrušit</ion-button>
       <ion-button type="submit" color="secondary" expand="block">
-        {{ isEditing ? 'Save Changes' : 'Create Movie' }}
+        {{ isEditing ? 'Uložit změny' : 'Vytvořit' }}
       </ion-button>
     </div>
 

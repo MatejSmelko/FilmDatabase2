@@ -5,11 +5,11 @@
     <ion-buttons slot="start">
       <div class="user-badge" *ngIf="userEmail" (click)="logout()">
         <ion-icon name="log-out-outline" color="secondary"></ion-icon>
-        <span class="username">Logout</span>
+        <span class="username">Odhlásit se</span>
       </div>
     </ion-buttons>
 
-    <ion-title class="app-logo ion-text-center">
+    <ion-title class="app-logo ion-text-center" (click)="scrollToTop()">
       <img src="assets/icon/logo.png" alt="MovieDB Logo" class="logo-img"></ion-title>
 
     <!-- HEADER PRAVÁ STRANA: Přidat film (jen když je přihlášen) -->
@@ -28,23 +28,24 @@
   <div class="segment-container">
     <ion-segment [(ngModel)]="currentView" mode="ios">
       
-      <!-- Záložka Collection (vždy viditelná, ale prázdná pro hosta) -->
-      <ion-segment-button value="collection" *ngIf="userEmail">
-        <ion-label>Collection</ion-label>
+<ion-segment-button value="collection" *ngIf="userEmail">
+        <ion-label>Kolekce</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="login" *ngIf="userEmail">
-        <ion-label>Login</ion-label>
+      <ion-segment-button value="profile" *ngIf="userEmail">
+        <ion-label>Profil</ion-label>
       </ion-segment-button>
 
-      <!-- Záložky pro nepřihlášené -->
+      <!-- PRO HOSTY: Login + Register -->
       <ion-segment-button value="login" *ngIf="!userEmail">
-        <ion-label>Login</ion-label>
+        <ion-label>Přihlášení</ion-label>
       </ion-segment-button>
       <ion-segment-button value="register" *ngIf="!userEmail">
-        <ion-label>Register</ion-label>
+        <ion-label>Registrace</ion-label>
       </ion-segment-button>
+
     </ion-segment>
   </div>
+
 
 
   <!-- 1. VIEW: KOLEKCE FILMŮ -->
@@ -52,7 +53,7 @@
     
     <!-- Vyhledávání a filtry -->
     <div class="search-sort-container">
-      <ion-searchbar class="custom-search" placeholder="Search..." color="dark" animated="false" (ionInput)="searchMovies($event)"></ion-searchbar>
+      <ion-searchbar class="custom-search" placeholder="Vyhledat..." color="dark" type="text" (ionInput)="searchMovies($event)"></ion-searchbar>
       <ion-button color="secondary" fill="solid" class="sort-btn" (click)="openSortMenu()">
         <ion-icon slot="icon-only" name="filter"></ion-icon>
       </ion-button>
@@ -85,16 +86,41 @@
     <!-- Empty State -->
     <div class="empty-state" *ngIf="filteredMovies.length === 0">
       <ion-icon name="videocam-outline" style="font-size: 60px; color: #333;"></ion-icon>
-      <p style="color: #666;">No movies found.</p>
+      <p style="color: #666;">Nenašly se žádné filmy.</p>
     </div>
   </div>
 
+<!-- 2. VIEW: PROFILE -->
+<div *ngIf="currentView === 'profile' && userEmail" class="auth-wrapper fade-in">
+    <div class="auth-box">
+      <div class="avatar-circle">
+        {{ userEmail.charAt(0).toUpperCase() }}
+      </div>
+      
+      <h2>Vítejte zpátky</h2>
+      <p class="subtitle">{{ userEmail }}</p>
 
-  <!-- 2. VIEW: LOGIN -->
+      <div class="info-card">
+        <ion-item lines="none" color="none">
+          <ion-icon name="film-outline" slot="start" color="secondary"></ion-icon>
+          <ion-label>
+            <h3>Počet filmů</h3>
+            <p>{{ movies.length }} filmů v kolekci</p>
+          </ion-label>
+        </ion-item>
+      </div>
+
+      <ion-button expand="block" color="medium" fill="outline" class="logout-btn" (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Odhlásit se
+      </ion-button>
+    </div>
+  </div>
+  <!-- 3. VIEW: LOGIN -->
   <div *ngIf="currentView === 'login'" class="auth-wrapper fade-in">
     <div class="auth-box">
-      <h2>Welcome Back</h2>
-      <p class="subtitle">Please sign in to your account</p>
+      <h2>Vítejte zpátky</h2>
+      <p class="subtitle">Přihlaste se ke svému účtu</p>
 
       <div class="custom-input">
         <ion-icon name="mail-outline" class="input-icon"></ion-icon>
@@ -102,11 +128,11 @@
       </div>
       <div class="custom-input">
         <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-        <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+        <ion-input type="password" placeholder="Heslo" [(ngModel)]="password"></ion-input>
       </div>
 
       <ion-button expand="block" color="secondary" class="submit-btn" (click)="submitAuth('login')">
-        Sign In
+        Přihlásit se
       </ion-button>
 
       <!-- Hláška pod tlačítkem -->
@@ -118,11 +144,11 @@
   </div>
 
 
-  <!-- 3. VIEW: REGISTER -->
+  <!-- 4. VIEW: REGISTER -->
   <div *ngIf="currentView === 'register'" class="auth-wrapper fade-in">
     <div class="auth-box">
-      <h2>Create Account</h2>
-      <p class="subtitle">Join us and start your collection</p>
+      <h2>Vytvořit účet</h2>
+      <p class="subtitle">Přidej se k nám a začni se svou kolekcí</p>
 
       <div class="custom-input">
         <ion-icon name="mail-outline" class="input-icon"></ion-icon>
@@ -130,11 +156,11 @@
       </div>
       <div class="custom-input">
         <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-        <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+        <ion-input type="password" placeholder="Heslo" [(ngModel)]="password"></ion-input>
       </div>
 
       <ion-button expand="block" color="secondary" class="submit-btn" (click)="submitAuth('register')">
-        Sign Up
+       Zaregistrovat se 
       </ion-button>
 
       <!-- Hláška pod tlačítkem -->

@@ -12,8 +12,8 @@ import { AddMovieModalComponent } from '../add-movie-modal/add-movie-modal.compo
     CommonModule,
     FormsModule,
     Tab1PageRoutingModule,
-    AddMovieModalComponent // <--- MODÁL ZDE
+    AddMovieModalComponent
   ],
-  declarations: [Tab1Page] // <--- STRÁNKA ZDE
+  declarations: [Tab1Page]
 })
 export class Tab1PageModule {}

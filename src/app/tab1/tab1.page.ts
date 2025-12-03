@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, ActionSheetController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModalController, ActionSheetController, IonContent } from '@ionic/angular';
 import { AddMovieModalComponent } from '../add-movie-modal/add-movie-modal.component';
 import { Movie } from '../interface/movie.interface';
 
@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
 })
 export class Tab1Page implements OnInit {
 
+  @ViewChild(IonContent) content!: IonContent;
   // --- PROMĚNNÉ PRO FILMY ---
   movies: Movie[] = [];
   filteredMovies: Movie[] = [];
@@ -24,12 +25,12 @@ export class Tab1Page implements OnInit {
   movieSubscription: Subscription | null = null;
 
   // --- PROMĚNNÉ PRO ZOBRAZENÍ A AUTH ---
-  currentView: string = 'collection'; // Řídí, co je vidět (collection | login | register)
+  currentView: string = 'collection';
   
   // Data formulářů
   email = '';
   password = '';
-  username = ''; // Jen pro registraci
+  username = '';
 
   // Chybové hlášky
   statusMessage: string | null = null;
@@ -49,7 +50,7 @@ export class Tab1Page implements OnInit {
         // PŘIHLÁŠEN
         this.userId = user.uid;
         this.userEmail = user.email;
-        this.currentView = 'collection'; // Ukážeme filmy
+        this.currentView = 'collection'; 
         this.loadMoviesFromFirebase();
       } else {
         // ODHLÁŠEN
@@ -57,7 +58,7 @@ export class Tab1Page implements OnInit {
         this.userEmail = null;
         this.movies = [];
         this.filteredMovies = [];
-        this.currentView = 'login'; // Ukážeme přihlášení
+        this.currentView = 'login'; 
         if (this.movieSubscription) {
           this.movieSubscription.unsubscribe();
         }
@@ -65,6 +66,9 @@ export class Tab1Page implements OnInit {
     });
   }
 
+    scrollToTop() {
+    this.content.scrollToTop(500);
+  }
   // ==========================================
   // LOGIKA PŘIHLÁŠENÍ A REGISTRACE
   // ==========================================
@@ -134,7 +138,6 @@ export class Tab1Page implements OnInit {
   showStatus(msg: string, color: string) {
     this.statusMessage = msg;
     this.statusColor = color;
-    // Hláška zmizí po 3 sekundách
     setTimeout(() => {
       this.statusMessage = null;
     }, 3000);
@@ -190,18 +193,18 @@ export class Tab1Page implements OnInit {
       header: movie.title,
       buttons: [
         {
-          text: 'Edit',
+          text: 'Upravit',
           icon: 'create',
           handler: () => this.openAddModal(movie)
         },
         {
-          text: 'Delete',
+          text: 'Smazat',
           role: 'destructive',
           icon: 'trash',
           handler: () => this.deleteMovie(movie)
         },
         {
-          text: 'Cancel',
+          text: 'Zrušit',
           icon: 'close',
           role: 'cancel'
         }
@@ -232,12 +235,12 @@ export class Tab1Page implements OnInit {
   // Menu pro řazení
   async openSortMenu() {
     const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Sort Collection By',
+      header: 'Třídit kolekci podle',
       buttons: [
-        { text: 'Rating (Highest First)', icon: 'star', handler: () => this.sortMovies('rating') },
-        { text: 'Year (Newest First)', icon: 'calendar', handler: () => this.sortMovies('year') },
-        { text: 'Title (A-Z)', icon: 'text', handler: () => this.sortMovies('title') },
-        { text: 'Cancel', icon: 'close', role: 'cancel' }
+        { text: 'Hodnocení (Od nejvyššího)', icon: 'star', handler: () => this.sortMovies('rating') },
+        { text: 'Rok (Od nejnovějšího)', icon: 'calendar', handler: () => this.sortMovies('year') },
+        { text: 'Název (A-Z)', icon: 'text', handler: () => this.sortMovies('title') },
+        { text: 'Zrušit', icon: 'close', role: 'cancel' }
       ]
     });
     await actionSheet.present();
